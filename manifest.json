@@ -1,0 +1,17 @@
+{
+  "name": "PerfectVariant",
+  "short_name": "PerVar",
+  "description": "A hsl perfect variant app built by Kelly",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#2a2a2a",
+  "theme_color": "#ff0075",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ]
+}

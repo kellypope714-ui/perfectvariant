@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PerfectVariant</title>
+<link rel="manifest" href="manifest.json">
+<style>
+/* ---------------------------------------------------
+   GLOBAL RESET + BASE
+--------------------------------------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Cormorant Garamond", serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffd1e8, #d4fff3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  transition: background 0.4s ease;
+  color: #222;
+}
+
+body.dark {
+  background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+  color: #f5f5f5;
+}
+
+/* ---------------------------------------------------
+   HEADER
+--------------------------------------------------- */
+header {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.header-left h1 {
+  font-size: 26px;
+}
+
+.header-links {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.header-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  text-decoration: none;
+  color: #333;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+body.dark .header-link {
+  background: rgba(255, 255, 255, 0.1);
+  color: #eee;
+}
+
+.header-link img {
+  width: 22px;
+  height: 22px;
+}
+
+.header-link:hover {
+  transform: translateY(-2px);
+}
+
+/* Toggle Button */
+#themeToggle {
+  cursor: pointer;
+  border: none;
+  background: rgba(255,255,255,0.35);
+  backdrop-filter: blur(10px);
+  padding: 6px 10px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+}
+
+body.dark #themeToggle {
+  background: rgba(255,255,255,0.1);
+}
+
+#themeToggle:hover {
+  transform: translateY(-2px);
+}
+
+/* ---------------------------------------------------
+   INPUT + CLEAR BUTTON
+--------------------------------------------------- */
+.input-row {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+#hexInput {
+  flex: 1;
+  padding: 12px 15px;
+  border-radius: 14px;
+  border: none;
+  font-size: 18px;
+  background: rgba(255,255,255,0.35);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  outline: none;
+}
+
+body.dark #hexInput {
+  background: rgba(255,255,255,0.1);
+  color: #eee;
+}
+
+#clearBtn {
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  background: rgba(255,255,255,0.35);
+  backdrop-filter: blur(12px);
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+}
+
+body.dark #clearBtn {
+  background: rgba(255,255,255,0.1);
+  color: #eee;
+}
+
+#clearBtn:hover {
+  transform: translateY(-2px);
+}
+
+/* ---------------------------------------------------
+   SLIDERS
+--------------------------------------------------- */
+.slider-group {
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 25px;
+}
+
+.slider-block {
+  margin-bottom: 18px;
+}
+
+.slider-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.slider-label-row label {
+  font-size: 18px;
+}
+
+.slider-value {
+  font-size: 14px;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.slider-value.bump {
+  transform: scale(1.1);
+  opacity: 0.9;
+}
+
+input[type="range"] {
+  width: 100%;
+  height: 10px;
+  border-radius: 10px;
+  appearance: none;
+  background: rgba(255,255,255,0.35);
+  backdrop-filter: blur(10px);
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  cursor: pointer;
+}
+
+body.dark input[type="range"] {
+  background: rgba(255,255,255,0.1);
+}
+
+body.dark input[type="range"]::-webkit-slider-thumb {
+  background: #ddd;
+}
+
+/* ---------------------------------------------------
+   3×3 GRID
+--------------------------------------------------- */
+.grid {
+  width: 100%;
+  max-width: 900px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.color-card {
+  position: relative;
+  height: 120px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  transition: transform 0.2s ease;
+}
+
+.color-card:hover {
+  transform: translateY(-4px);
+}
+
+/* ---------------------------------------------------
+   CARD INFO BAR
+--------------------------------------------------- */
+.card-info {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+body.dark .card-info {
+  background: rgba(0,0,0,0.45);
+  color: #eee;
+}
+
+.color-card:hover .card-info {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.copy-icon {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.copy-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.copy-icon:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+</style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <h1>PerfectVariant</h1>
+    </div>
+
+    <div class="header-links">
+
+      <!-- PerfectHex -->
+      <a href="https://kellypope714-ui.github.io/perfecthex/" class="header-link" target="_blank">
+        <img src="icon.png" alt="PerfectHex">
+        <span>PerfectHex</span>
+      </a>
+
+      <!-- PerfectUI -->
+      <a href="https://kellypope714-ui.github.io/perfectui/" class="header-link" target="_blank">
+        <img src="assets/perfectui.png" alt="PerfectUI">
+        <span>PerfectUI</span>
+      </a>
+
+      <!-- PerfectVariant (update href when published) -->
+      <a href="#" class="header-link">
+        <img src="assets/perfectvariant.png" alt="PerfectVariant">
+        <span>PerfectVariant</span>
+      </a>
+
+      <!-- Light/Dark Toggle -->
+      <button id="themeToggle" class="header-link">
+        <img src="https://img.icons8.com/ios-filled/50/000000/sun.png" alt="toggle">
+        <span>Light / Dark</span>
+      </button>
+
+    </div>
+  </header>
+
+  <!-- HEX INPUT + CLEAR BUTTON -->
+  <div class="input-row">
+    <input
+      type="text"
+      id="hexInput"
+      placeholder="Enter hex code (e.g. #ed0d11)">
+    <button id="clearBtn">Clear</button>
+  </div>
+
+  <!-- SLIDERS -->
+  <div class="slider-group">
+
+    <div class="slider-block">
+      <div class="slider-label-row">
+        <label for="hueSlider">Hue</label>
+        <span id="hueValue" class="slider-value">0°</span>
+      </div>
+      <input type="range" id="hueSlider" min="-180" max="180" value="0">
+    </div>
+
+    <div class="slider-block">
+      <div class="slider-label-row">
+        <label for="satSlider">Saturation</label>
+        <span id="satValue" class="slider-value">100%</span>
+      </div>
+      <input type="range" id="satSlider" min="0" max="200" value="100">
+    </div>
+
+    <div class="slider-block">
+      <div class="slider-label-row">
+        <label for="lightSlider">Lightness</label>
+        <span id="lightValue" class="slider-value">0%</span>
+      </div>
+      <input type="range" id="lightSlider" min="-30" max="30" value="0">
+    </div>
+
+  </div>
+
+  <!-- 3×3 GRID OF VARIANT CARDS -->
+  <div class="grid">
+
+    <!-- CARD TEMPLATE (repeated 9 times) -->
+    <div class="color-card" id="card1">
+      <div class="card-info">
+        <div class="card-text">
+          <span class="hex"></span>
+          <span class="hsl"></span>
+        </div>
+        <div class="card-actions">
+          <span class="copy-icon hex-copy" aria-label="Copy hex">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+          <span class="copy-icon hsl-copy" aria-label="Copy HSL">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="color-card" id="card2">
+      <div class="card-info">
+        <div class="card-text">
+          <span class="hex"></span>
+          <span class="hsl"></span>
+        </div>
+        <div class="card-actions">
+          <span class="copy-icon hex-copy">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+          <span class="copy-icon hsl-copy">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="color-card" id="card3">
+      <div class="card-info">
+        <div class="card-text">
+          <span class="hex"></span>
+          <span class="hsl"></span>
+        </div>
+        <div class="card-actions">
+          <span class="copy-icon hex-copy">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+          <span class="copy-icon hsl-copy">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 4 -->
+    <div class="color-card" id="card4">
+      <div class="card-info">
+        <div class="card-text">
+          <span class="hex"></span>
+          <span class="hsl"></span>
+        </div>
+        <div class="card-actions">
+          <span class="copy-icon hex-copy">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+          <span class="copy-icon hsl-copy">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 5 -->
+    <div class="color-card" id="card5">
+      <div class="card-info">
+        <div class="card-text">
+          <span class="hex"></span>
+          <span class="hsl"></span>
+        </div>
+        <div class="card-actions">
+          <span class="copy-icon hex-copy">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+          <span class="copy-icon hsl-copy">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 6 -->
+    <div class="color-card" id="card6">
+      <div class="card-info">
+        <div class="card-text">
+          <span class="hex"></span>
+          <span class="hsl"></span>
+        </div>
+        <div class="card-actions">
+          <span class="copy-icon hex-copy">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+          <span class="copy-icon hsl-copy">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 7 -->
+    <div class="color-card" id="card7">
+      <div class="card-info">
+        <div class="card-text">
+          <span class="hex"></span>
+          <span class="hsl"></span>
+        </div>
+        <div class="card-actions">
+          <span class="copy-icon hex-copy">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+          <span class="copy-icon hsl-copy">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 8 -->
+    <div class="color-card" id="card8">
+      <div class="card-info">
+        <div class="card-text">
+          <span class="hex"></span>
+          <span class="hsl"></span>
+        </div>
+        <div class="card-actions">
+          <span class="copy-icon hex-copy">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+          <span class="copy-icon hsl-copy">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 9 -->
+    <div class="color-card" id="card9">
+      <div class="card-info">
+        <div class="card-text">
+          <span class="hex"></span>
+          <span class="hsl"></span>
+        </div>
+        <div class="card-actions">
+          <span class="copy-icon hex-copy">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+          <span class="copy-icon hsl-copy">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v16h13a2 2 0 0 0 2-2V5z"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+// ---------------------------------------------------
+// UTILITIES: HEX <-> HSL
+// ---------------------------------------------------
+function hexToRgb(hex) {
+  hex = hex.replace('#', '').trim();
+  if (hex.length === 3) {
+    hex = hex.split('').map(c => c + c).join('');
+  }
+  if (hex.length !== 6) return null;
+
+  const num = parseInt(hex, 16);
+  return {
+    r: (num >> 16) & 255,
+    g: (num >> 8) & 255,
+    b: num & 255
+  };
+}
+
+function rgbToHex(r, g, b) {
+  const toHex = v => v.toString(16).padStart(2, '0');
+  return '#' + toHex(r) + toHex(g) + toHex(b);
+}
+
+function rgbToHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h, s, l = (max + min) / 2;
+
+  if (max === min) {
+    h = s = 0;
+  } else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
+      case g: h = ((b - r) / d + 2); break;
+      case b: h = ((r - g) / d + 4); break;
+    }
+    h *= 60;
+  }
+  return { h, s: s * 100, l: l * 100 };
+}
+
+function hslToRgb(h, s, l) {
+  s /= 100; l /= 100;
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l - c / 2;
+  let r1, g1, b1;
+
+  if (0 <= h && h < 60) { r1 = c; g1 = x; b1 = 0; }
+  else if (60 <= h && h < 120) { r1 = x; g1 = c; b1 = 0; }
+  else if (120 <= h && h < 180) { r1 = 0; g1 = c; b1 = x; }
+  else if (180 <= h && h < 240) { r1 = 0; g1 = x; b1 = c; }
+  else if (240 <= h && h < 300) { r1 = x; g1 = 0; b1 = c; }
+  else { r1 = c; g1 = 0; b1 = x; }
+
+  const r = Math.round((r1 + m) * 255);
+  const g = Math.round((g1 + m) * 255);
+  const b = Math.round((b1 + m) * 255);
+  return { r, g, b };
+}
+
+function hslToCss(h, s, l) {
+  return `hsl(${Math.round(h)}, ${Math.round(s)}%, ${Math.round(l)}%)`;
+}
+
+// ---------------------------------------------------
+// DOM ELEMENTS
+// ---------------------------------------------------
+const hexInput = document.getElementById('hexInput');
+const clearBtn = document.getElementById('clearBtn');
+
+const hueSlider = document.getElementById('hueSlider');
+const satSlider = document.getElementById('satSlider');
+const lightSlider = document.getElementById('lightSlider');
+
+const hueValue = document.getElementById('hueValue');
+const satValue = document.getElementById('satValue');
+const lightValue = document.getElementById('lightValue');
+
+const cards = Array.from(document.querySelectorAll('.color-card'));
+const themeToggle = document.getElementById('themeToggle');
+
+// Offsets for the 9 cards (lightness)
+const lightOffsets = [-20, -15, -10, -5, 0, 5, 10, 15, 20];
+
+// ---------------------------------------------------
+// THEME TOGGLE
+// ---------------------------------------------------
+function applyThemeFromStorage() {
+  const saved = localStorage.getItem('pv-theme');
+  if (saved === 'dark') {
+    document.body.classList.add('dark');
+  } else {
+    document.body.classList.remove('dark');
+  }
+}
+
+function toggleTheme() {
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  localStorage.setItem('pv-theme', isDark ? 'dark' : 'light');
+}
+
+applyThemeFromStorage();
+if (themeToggle) {
+  themeToggle.addEventListener('click', toggleTheme);
+}
+
+// ---------------------------------------------------
+// SLIDER VALUE DISPLAY
+// ---------------------------------------------------
+function updateSliderValues(bumpWhich = null) {
+  const hue = parseInt(hueSlider.value, 10) || 0;
+  const sat = parseInt(satSlider.value, 10) || 100;
+  const light = parseInt(lightSlider.value, 10) || 0;
+
+  hueValue.textContent = `${hue}°`;
+  satValue.textContent = `${sat}%`;
+  lightValue.textContent = `${light}%`;
+
+  if (bumpWhich) {
+    const el =
+      bumpWhich === 'hue' ? hueValue :
+      bumpWhich === 'sat' ? satValue :
+      bumpWhich === 'light' ? lightValue : null;
+
+    if (el) {
+      el.classList.add('bump');
+      setTimeout(() => el.classList.remove('bump'), 150);
+    }
+  }
+}
+
+// ---------------------------------------------------
+// CORE UPDATE LOGIC
+// ---------------------------------------------------
+function normalizeHex(value) {
+  if (!value) return null;
+  let v = value.trim();
+  if (!v.startsWith('#')) v = '#' + v;
+  const hex = v.replace('#', '');
+  if (![3, 6].includes(hex.length)) return null;
+  if (!/^[0-9a-fA-F]+$/.test(hex)) return null;
+  return '#' + hex;
+}
+
+function updateVariants() {
+  const normalized = normalizeHex(hexInput.value);
+  if (!normalized) {
+    // Clear cards if invalid or empty
+    cards.forEach(card => {
+      card.style.background = 'transparent';
+      card.querySelector('.hex').textContent = '';
+      card.querySelector('.hsl').textContent = '';
+    });
+    return;
+  }
+
+  const rgb = hexToRgb(normalized);
+  const baseHsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+
+  const hueOffset = parseInt(hueSlider.value, 10) || 0;
+  const satFactor = (parseInt(satSlider.value, 10) || 100) / 100;
+  const lightOffsetSlider = parseInt(lightSlider.value, 10) || 0;
+
+  cards.forEach((card, index) => {
+    const offset = lightOffsets[index];
+
+    // Correct hue
+    let h = (baseHsl.h + hueOffset + 360) % 360;
+
+    // Correct saturation (same for all cards)
+    let s = baseHsl.s + (parseInt(satSlider.value, 10) - 100);
+if (s < 0) s = 0;
+if (s > 100) s = 100;
+
+    // Correct lightness (only thing that changes per card)
+    let l = Math.min(100, Math.max(0, baseHsl.l + offset + lightOffsetSlider));
+
+    const cssHsl = `hsl(${Math.round(h)}, ${Math.round(s)}%, ${Math.round(l)}%)`;
+    const rgbVariant = hslToRgb(h, s, l);
+    const hexVariant = rgbToHex(rgbVariant.r, rgbVariant.g, rgbVariant.b).toUpperCase();
+
+    card.style.background = cssHsl;
+
+    card.querySelector('.hex').textContent = hexVariant;
+    card.querySelector('.hsl').textContent = cssHsl;
+  });
+}
+
+// ---------------------------------------------------
+// COPY HANDLERS
+// ---------------------------------------------------
+function handleCopyClick(e) {
+  const target = e.target.closest('.copy-icon');
+  if (!target) return;
+
+  const card = target.closest('.color-card');
+  if (!card) return;
+
+  const hexSpan = card.querySelector('.hex');
+  const hslSpan = card.querySelector('.hsl');
+
+  let textToCopy = '';
+
+  if (target.classList.contains('hex-copy') && hexSpan) {
+    textToCopy = hexSpan.textContent.trim();
+  } else if (target.classList.contains('hsl-copy') && hslSpan) {
+    textToCopy = hslSpan.textContent.trim();
+  }
+
+  if (!textToCopy) return;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(textToCopy).catch(() => {});
+  }
+}
+
+cards.forEach(card => {
+  card.addEventListener('click', handleCopyClick);
+});
+
+// ---------------------------------------------------
+// CLEAR BUTTON
+// ---------------------------------------------------
+clearBtn.addEventListener('click', () => {
+  hexInput.value = '';
+  updateVariants();
+});
+
+// ---------------------------------------------------
+// INPUT + SLIDER EVENTS
+// ---------------------------------------------------
+hexInput.addEventListener('input', () => {
+  updateVariants();
+});
+
+hueSlider.addEventListener('input', () => {
+  updateSliderValues('hue');
+  updateVariants();
+});
+
+satSlider.addEventListener('input', () => {
+  updateSliderValues('sat');
+  updateVariants();
+});
+
+lightSlider.addEventListener('input', () => {
+  updateSliderValues('light');
+  updateVariants();
+});
+
+// ---------------------------------------------------
+// INITIAL STATE
+// ---------------------------------------------------
+hexInput.value = '';
+updateSliderValues();
+updateVariants();
+</script>
+
+</body>
+</html>
